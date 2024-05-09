@@ -1,4 +1,7 @@
-importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js");
+//importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/ort.webgl.min.js");
+importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/ort.webgpu.min.js");
+//importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/ort.min.js");
+
 
 let model = null;
 
@@ -10,7 +13,10 @@ onmessage = async(event) => {
 
 async function run_model(input) {
     if (!model) {
-        model = await ort.InferenceSession.create("./yolov8n.onnx");
+        model = await ort.InferenceSession.create("./yolov8n.onnx", {
+ //           executionProviders: ['webgl']
+            executionProviders: ['webgpu']
+        });
     }
     input = new ort.Tensor(Float32Array.from(input),[1, 3, 640, 640]);
     const outputs = await model.run({images:input});
